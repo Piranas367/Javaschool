@@ -5,7 +5,7 @@ void setup() {
   for (int i = 0; i < variabeleNaam.length; i++) {
     if (variabeleNaam[i].equals("jan")) { // Vergelijk met "jan" in plaats van Jan
       gevonden = true;
-      break; // Stop de lus zodra de naam is gevonden
+      break; // Stop de lus zodra de naam is gevonden 
     }
   }
   
