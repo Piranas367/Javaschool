@@ -1,19 +1,31 @@
-int score;
+import controlP5.*;
+int[] basisInts;
+int score ;
 int score2;
 int menu;
+int winScore = 10;
+boolean spelgeëindigd;
 boolean beginSpel = false;
+boolean eindSpel = false;
+boolean gameStarted = false;
+boolean gameEnded = false;
+
+class Button {
+
+}
 
 class Ball {
+  float[]floatGetallen;
   float x;
   float y;
   float speedX;
   float speedY;
   float diameter;
   color c;
-  float left;
-  float right;
+  float left2;
+  float right2;
   float balSnelheidX;
-  float balSnelheidy;
+  float balSnelheidY;
 
   Ball(float balX, float balY, float balDiameter) {
     x = balX;
@@ -52,6 +64,7 @@ class Ball {
 }
 
 class Paddle {
+  float [] floatPaddle;
   float x;
   float y;
   float w;
@@ -59,6 +72,7 @@ class Paddle {
   float speedY;
   float speedX;
   color c;
+
 
   Paddle(float tempX, float tempY, float tempW, float tempH) {
     x = tempX;
@@ -69,7 +83,7 @@ class Paddle {
     speedX = 0;
     c = color(255);
   }
-void move() {
+  void move() {
     y += speedY;
     x += speedX;
   }
@@ -89,167 +103,179 @@ void move() {
 
   float top() {
     return y - h / 2;
+    
   }
 
   float bottom() {
     return y + h / 2;
   }
+  
 }
 
-  Ball myBall;
-  Paddle paddleLeft;
-  Paddle paddleRight;
-  Knop StartKnop;
+Ball myBall;
+Paddle paddleLeft;
+Paddle paddleRight;
+Button StartButton = new Button();
 
+
+  ControlP5 cp;
+  ControlP5 cp2;
+  
 
 void setup() {
   size(800, 600);
+  cp = new ControlP5(this);
+  cp2 = new ControlP5(this);
+  cp.addButton("BeginSpel")
+    .setPosition(CENTER - -200, CENTER - -270)
+    .setSize(400, 100);
+    textSize(32);
+  cp2.addButton("SpeelOpnieuw")
+          .setPosition(CENTER - -200, CENTER - -270)
+          .setSize(400, 100);
+  cp2.getController("SpeelOpnieuw").hide();
   
-  StartKnop = new Knop  (250,350,100,50,"Spel Starten", 0,200,200); 
+    
+  
+  
   
   myBall = new Ball(400, 300, 20);
   paddleLeft = new Paddle(15, height / 2, 20, 100);
-  paddleRight = new Paddle(width - 15, height / 2, 20, 100); 
+  paddleRight = new Paddle(width - 15, height / 2, 20, 100);
 
-  myBall.speedX = 5;
+  myBall.speedX = 7;
   myBall.speedY = random(-3, 3);
-  myBall.left = width/2;
-  myBall.right = height/2;
-  
-   
-   
+  myBall.left2 = width / 2;
+  myBall.right2 = height / 2;
 }
 
 void draw() {
-  background(0);
-  switch(menu){
-    case 0:
+  if (!gameStarted) {
     
+    background(0);
+    fill(255);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("Pong the Game!", width / 2, height / 5);
     
-      fill (0);
-      textSize(30);
-      textAlign(CENTER,CENTER);
-      text("Pong the game", width/2, height/2);
-      StartKnop.update();
-      StartKnop.render();
-      if (StartKnop.isClicked())
-      if (mouseX > 250 && mouseX < 250 + 100 && mouseY > 350 && mouseY < 350 + 50 && mousePressed) {
-      startGame = true;
-      {
-        menu = 1;
-      }
+   
+  } else {
     
-    break;
-  }
-    
+
+    background(0);
+    fill(100);
+
+    if (myBall.left() < paddleLeft.right() && myBall.y > paddleLeft.top() && myBall.y < paddleLeft.bottom()) {
+      myBall.speedX = -myBall.speedX;
       
-  
-  
- 
- 
- 
- 
- 
- 
-  myBall.move();
-  myBall.display();
-
-
-  paddleLeft.move();
-  paddleLeft.display();
-  paddleRight.move();
-  paddleRight.display();
-
-
-  if (myBall.left() < paddleLeft.right() && myBall.y > paddleLeft.top() && myBall.y < paddleLeft.bottom()) {
-    myBall.speedX = -myBall.speedX;
-  }
-
-  if (myBall.right() > paddleRight.left() && myBall.y > paddleRight.top() && myBall.y < paddleRight.bottom()) {
-    myBall.speedX = -myBall.speedX;
-  }
-
-  if (myBall.left() < 0) {
-    myBall.speedX = abs(myBall.speedX);
-    score2++;
-    myBall.x = width / 2;
-    myBall.y = height / 2;
-    
-  }
-
-  if (myBall.right() > width) {
-    myBall.speedX = -abs(myBall.speedX); 
-    score++;
-    myBall.x = width / 2;
-    myBall.y = height / 2;
-  }
-
-  if (myBall.top() < 0 || myBall.bottom() > height) {
-    myBall.speedY = -myBall.speedY;
     }
-   textSize(25);
- text("Score   = " + score, width / 2.3, 20);
-  text("Score  = " + score2, width / 2.3, height- 18);
-  
-  maakWinaar();
 
+    if (myBall.right() > paddleRight.left() && myBall.y > paddleRight.top() && myBall.y < paddleRight.bottom()) {
+      myBall.speedX = -myBall.speedX;
+    }
+
+    if (myBall.left() < 0) {
+      myBall.speedX = abs(myBall.speedX);
+      score2++;
+      myBall.x = width / 2;
+      myBall.y = height / 2;
+    }
+
+    if (myBall.right() > width) {
+      myBall.speedX = -abs(myBall.speedX);
+      score++;
+      myBall.x = width / 2;
+      myBall.y = height / 2;
+    }
+
+    if (myBall.top() < 0 || myBall.bottom() > height) {
+      myBall.speedY = -myBall.speedY;
+    }
+
+    if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100 &&
+        mouseY > height / 2 - 50 && mouseY < height / 2 + 50) {
+      cursor(HAND);
+    } else {
+      cursor(ARROW);
+    }
+
+    if (score >= 10) {
+      cp2.getController("SpeelOpnieuw").show();
+        background(0);
+    fill(255);      
+    }
+    if (score2 >= 10) {
+      cp2.getController("SpeelOpnieuw").show();
+      background(0);
+   
+          
+    }
+
+    if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100 &&
+        mouseY > height / 2 - 50 && mouseY < height / 2 + 50) {
+      cursor(HAND);
+    } else {
+      cursor(ARROW);
+    }
+
+    myBall.move();
+    myBall.display();
+    paddleLeft.move();
+    paddleLeft.display();
+    paddleRight.move();
+    paddleRight.display();
+
+    textSize(25);
+    text("Score   = " + score, width / 2.3, 20);
+    text("Score  = " + score2, width / 2.3, height - 18);
+  }
 }
 
-boolean BalRaaktZijkant (){
- if (myBall.left == 0 || myBall.left == width) {
-    myBall.left = width/15;
-    myBall.right = height/15;
-    myBall.speedX = 5;
-    myBall.speedY = random(-3, 3);
-   println("Raakt zijkant");
-   return true;
- }
- 
- return false;
-}
 
 
 
-void keyPressed(){
-  if(keyCode == UP){
+void keyPressed() {
+  if (keyCode == UP) {
     paddleRight.speedY=-3;
   }
-  if(keyCode == DOWN){
+  if (keyCode == DOWN) {
     paddleRight.speedY=3;
   }
-  if(key == 'w'){
+  if (key == 'w') {
     paddleLeft.speedY=-3;
   }
-  if(key == 's'){
+  if (key == 's') {
     paddleLeft.speedY=3;
   }
 }
 
 
-void keyReleased(){
-  if(keyCode == UP){
+void keyReleased() {
+  if (keyCode == UP) {
     paddleRight.speedY=0;
   }
-  if(keyCode == DOWN){
+  if (keyCode == DOWN) {
     paddleRight.speedY=0;
   }
-  if(key == 'w'){
+  if (key == 'w') {
     paddleLeft.speedY=0;
   }
-  if(key == 's'){
+  if (key == 's') {
     paddleLeft.speedY=0;
   }
 }
 
-void maakWinaar() {
-  fill(255);
-  if(score >= 10) {
-    text("Winnaar", width/2, height/2);
-  } else if (score2 >= 10) {
-    text("Winnaar", width/2, height/2);
-  }
+void BeginSpel() {
+  
+  gameStarted = true;
+  cp.remove("BeginSpel");
+}
+void SpeelOpnieuw() {
+   score = 0;
+   score2 = 0;
+  cp2.getController("SpeelOpnieuw").hide();
+ 
 }
 
-void eindeGame(){
-  fill(255);
-} 
+//for(int i = 0; i<10; i++){
+//} 
